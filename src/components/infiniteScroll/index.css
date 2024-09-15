@@ -1,5 +1,10 @@
 .item-container{
     border: 2px solid black;
+    height: 300px;
+    width: 500px;
+    text-align: center;
+    margin: auto;
+    overflow: auto;
 }
 .item:nth-child(odd){
     border: 5px solid rgb(41, 51, 233);

@@ -1,25 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./index.css";
 
 const InfiniteScroll = () => {
   const [count, setCount] = useState(10);
+  const divRef = useRef(null);
 
   const onScroll = () => {
-    // if scrolled to the bottom
-    if (
-      window.innerHeight + window.scrollY >=
-      window.document.body.offsetHeight
-    ) {
-      // update the state
+    // if scrolled to the bottom inside div
+    const { scrollTop, scrollHeight, clientHeight } = divRef.current;
+    if (scrollTop + clientHeight >= scrollHeight) {
       setCount(count + 10);
     }
   };
   useEffect(() => {
-    //scroll event
-    window.addEventListener("scroll", onScroll);
+    //scroll event added to the div
+    divRef.current.addEventListener("scroll", onScroll);
 
     // memory cleanup, remove listener
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => divRef.current.removeEventListener("scroll", onScroll);
   }, [count]);
 
   //generate list
@@ -32,9 +30,11 @@ const InfiniteScroll = () => {
     );
   }
 
-  console.log("Render: ", count);
-
-  return <div className="item-container">{elements}</div>;
+  return (
+    <div ref={divRef} className="item-container">
+      {elements}
+    </div>
+  );
 };
 
 export default InfiniteScroll;
