@@ -1,8 +1,39 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./index.css";
 
+const URL = "https://jsonplaceholder.typicode.com/albums";
+
 const InfiniteScroll = () => {
-  const [count, setCount] = useState(10);
+  const [comments, setComments] = useState([]);
+  const [pageNo, setPageNo] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [isDataFinished, setIsDataFinished] = useState(false);
+
+  const fetchData = () => {
+    setLoading(true);
+    axios
+      .get(`${URL}?userId=${pageNo}`)
+      .then((response) => {
+        // add the fetched data to the existing list
+        setComments([...comments, ...response.data]);
+
+        // if response is empty means all data is fetched
+        if (response.data.length === 0) {
+          setIsDataFinished(true);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("Error : ", err);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    // make api call, on initial load and when pageno updated
+    fetchData();
+  }, [, pageNo]);
 
   const onScroll = () => {
     // if scrolled to the bottom
@@ -11,7 +42,8 @@ const InfiniteScroll = () => {
       window.document.body.offsetHeight
     ) {
       // update the state
-      setCount(count + 10);
+      setPageNo(pageNo + 1);
+      //   setComments(comments + 10);
     }
   };
   useEffect(() => {
@@ -20,21 +52,31 @@ const InfiniteScroll = () => {
 
     // memory cleanup, remove listener
     return () => window.removeEventListener("scroll", onScroll);
-  }, [count]);
+  }, [comments]);
 
   //generate list
-  const elements = [];
-  for (let i = 0; i < count; i++) {
-    elements.push(
-      <div className="item" key={i}>
-        Item {i + 1}{" "}
+  const elementsList = [];
+  for (let com of comments) {
+    elementsList.push(
+      <div className="item" key={com.id}>
+        Item {com.id} {com.title}{" "}
       </div>
     );
   }
-
-  console.log("Render: ", count);
-
-  return <div className="item-container">{elements}</div>;
+  return (
+    <div className="item-container">
+      {elementsList}
+      <div>
+        {!isDataFinished && loading ? (
+          <>
+            <h1>Loading...</h1>
+          </>
+        ) : (
+          <h1>Fetched All Data</h1>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default InfiniteScroll;
