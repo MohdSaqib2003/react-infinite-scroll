@@ -1,0 +1,17 @@
+.item-container{
+    border: 2px solid black;
+}
+.item:nth-child(odd){
+    border: 5px solid rgb(41, 51, 233);
+}
+.item:nth-child(even){
+    border: 5px solid red;
+}
+
+.item{
+    /* border: 5px solid red; */
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+    font-size: 25px;
+}
