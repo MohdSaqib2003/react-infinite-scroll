@@ -18,7 +18,7 @@ const InfiniteScroll = () => {
         // add the fetched data to the existing list
         setComments([...comments, ...response.data]);
 
-        // if response is empty means all data is fetched
+        // if response is empty means all data is fetched(set a Flag all data fetched)
         if (response.data.length === 0) {
           setIsDataFinished(true);
         }
@@ -41,8 +41,11 @@ const InfiniteScroll = () => {
       window.innerHeight + window.scrollY >=
       window.document.body.offsetHeight
     ) {
-      // update the state
-      setPageNo(pageNo + 1);
+      // If user scrolls up and down it updates the pageNo which cause extra API call
+      if (!isDataFinished) {
+        // update the state
+        setPageNo(pageNo + 1);
+      }
       //   setComments(comments + 10);
     }
   };
@@ -72,7 +75,15 @@ const InfiniteScroll = () => {
             <h1>Loading...</h1>
           </>
         ) : (
-          <h1>Fetched All Data</h1>
+          <>
+            {isDataFinished ? (
+              <>
+                <h1>Fetched All Data</h1>
+              </>
+            ) : (
+              <></>
+            )}
+          </>
         )}
       </div>
     </div>
